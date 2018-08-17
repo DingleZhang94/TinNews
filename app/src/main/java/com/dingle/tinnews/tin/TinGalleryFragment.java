@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import com.dingle.tinnews.R;
 import com.dingle.tinnews.common.TinBasicFragment;
+import com.dingle.tinnews.mvp.MvpFragment;
 import com.dingle.tinnews.retrofit.NewsRequestApi;
 import com.dingle.tinnews.retrofit.RetrofitClient;
 import com.dingle.tinnews.retrofit.response.News;
@@ -24,7 +25,8 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class TinGalleryFragment extends TinBasicFragment implements TinNewsCard.OnSwipeListener {
+public class TinGalleryFragment extends MvpFragment<TinContract.Presenter>
+        implements TinNewsCard.OnSwipeListener, TinContract.View {
 
     private SwipePlaceHolderView mSwipeView;
 
@@ -71,36 +73,24 @@ public class TinGalleryFragment extends TinBasicFragment implements TinNewsCard.
             }
         });
 
-        getData();
         return view;
     }
 
-    public void getData(){
-
-
-        RetrofitClient.getInstance().create(NewsRequestApi.class).getNewsByCountry("us")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .filter(baseResponse -> baseResponse != null && baseResponse.articles != null)
-                .subscribe(baseResponse -> {
-                    showNewsCard(baseResponse.articles);
-                });
-    }
-
-    private void showNewsCard(List<News> newsList){
-        for (News news:
-             newsList) {
+    @Override
+    public void showNewsCard(List<News> newsList){
+        for (News news: newsList) {
             TinNewsCard tinNewsCard = new TinNewsCard(news, mSwipeView, this);
             mSwipeView.addView(tinNewsCard);
         }
     }
 
-
-
-
     @Override
     public void onLike(News news) {
-
+        presenter.saveFavoriteNews(news);
     }
 
+    @Override
+    public TinContract.Presenter getPresenter() {
+        return new TinPresenter();
+    }
 }
