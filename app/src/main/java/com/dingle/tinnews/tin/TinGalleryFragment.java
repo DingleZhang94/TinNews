@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.dingle.tinnews.R;
 import com.dingle.tinnews.common.TinBasicFragment;
@@ -92,5 +93,9 @@ public class TinGalleryFragment extends MvpFragment<TinContract.Presenter>
     @Override
     public TinContract.Presenter getPresenter() {
         return new TinPresenter();
+    }
+    @Override
+    public void onError() {
+        Toast.makeText(getContext(), "News has been inserted before", Toast.LENGTH_SHORT).show();
     }
 }

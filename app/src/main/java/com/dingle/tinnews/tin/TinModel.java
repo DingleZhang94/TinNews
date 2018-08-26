@@ -20,11 +20,12 @@ public class TinModel implements TinContract.Model {
         Completable.fromAction(() -> db.newsDao().insertNews(news)).
                 subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(() ->{
         }, error -> {
+                    presenter.onError();
         });
     }
 
     @Override
-    public void setPresenter(TinContract.Presenter presenter) {
+    public void setPresenter(   TinContract.Presenter presenter) {
         this.presenter = presenter;
     }
 

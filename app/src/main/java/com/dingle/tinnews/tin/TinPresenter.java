@@ -48,4 +48,9 @@ public class TinPresenter implements TinContract.Presenter {
             view.showNewsCard(newsList);
         }
     }
+
+    @Override
+    public void onError() {
+        if(view != null) view.onError();
+    }
 }
