@@ -3,20 +3,19 @@ package com.dingle.tinnews.save;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.dingle.tinnews.R;
-import com.dingle.tinnews.common.TinBasicFragment;
+import com.dingle.tinnews.common.ViewModelAdapter;
 import com.dingle.tinnews.mvp.MvpFragment;
 import com.dingle.tinnews.retrofit.response.News;
-import com.dingle.tinnews.save.detail.SavedNewsDetailedFragment;
 
-import org.w3c.dom.Text;
-
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -24,8 +23,9 @@ import java.util.List;
  */
 public class SavedNewsFragment extends MvpFragment<SavedNewsContract.Presenter> implements SavedNewsContract.View{
 
-    private TextView author;
-    private TextView description;
+    private ViewModelAdapter  savedNewsAdapter;
+    private TextView emptyState;
+
     public static SavedNewsFragment newInstance() {
         SavedNewsFragment fragment = new SavedNewsFragment();
         return fragment;
@@ -37,14 +37,11 @@ public class SavedNewsFragment extends MvpFragment<SavedNewsContract.Presenter> 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_saved_news, container, false);
-        author = view .findViewById(R.id.author);
-        description = view.findViewById(R.id.description);
-        description.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                tinFragmentManager.doFragmentTransaction(SavedNewsDetailedFragment.newInstance());
-            }
-        });
+        RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        emptyState = view.findViewById(R.id.empty_state);
+        savedNewsAdapter = new ViewModelAdapter();
+        recyclerView.setAdapter(savedNewsAdapter);
         return view;
     }
 
@@ -55,10 +52,17 @@ public class SavedNewsFragment extends MvpFragment<SavedNewsContract.Presenter> 
 
     @Override
     public void loadSavedNews(List<News> newsList) {
-        if(newsList != null || newsList.size() > 0){
-            News news = newsList.get(newsList.size() - 1);
-            author.setText(news.getAuthor());
-            description.setText(news.getDescription());
+        if (newsList.size() == 0) {
+            emptyState.setVisibility(View.VISIBLE);
+        } else {
+            emptyState.setVisibility(View.GONE);
+        }
+        if (newsList != null) {
+            List<SavedNewsViewModel> models = new LinkedList<>();
+            for (News news : newsList) {
+                models.add(new SavedNewsViewModel(news, tinFragmentManager));
+            }
+            savedNewsAdapter.addViewModels(models);
         }
     }
 
