@@ -35,7 +35,7 @@ public class SavedNewsViewModel extends BaseViewModel<SavedNewsViewModel.SavedNe
     public void bindViewHolder(SavedNewsViewHolder holder) {
         holder.author.setText(news.getAuthor());
         holder.description.setText(news.getDescription());
-        holder.icon.setImageResource(getDrawable());
+       // holder.icon.setImageResource(getDrawable());
         holder.itemView.setOnClickListener(v -> {
             fragmentManager.doFragmentTransaction(SavedNewsDetailedFragment.newInstance(news));
         });

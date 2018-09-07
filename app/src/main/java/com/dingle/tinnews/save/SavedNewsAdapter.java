@@ -35,7 +35,6 @@ public class SavedNewsAdapter extends RecyclerView.Adapter<SavedNewsAdapter.Save
         News news = newsList.get(position);
         holder.author.setText(news.getAuthor());
         holder.description.setText(news.getDescription());
-        holder.icon.setImageResource(getDrawable());
         holder.itemView.setOnClickListener(v -> {
             fragmentManager.doFragmentTransaction(SavedNewsDetailedFragment.newInstance(news));
         });
@@ -67,13 +66,11 @@ public class SavedNewsAdapter extends RecyclerView.Adapter<SavedNewsAdapter.Save
 
         TextView author;
         TextView description;
-        ImageView icon;
 
         public SavedNewsViewHolder(View itemView) {
             super(itemView);
             author = itemView.findViewById(R.id.author);
             description = itemView.findViewById(R.id.description);
-            icon = itemView.findViewById(R.id.image);
         }
     }
 
